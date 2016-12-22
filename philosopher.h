@@ -40,7 +40,11 @@ typedef struct _Philosopher_ {
    PhilosopherCutleryState cutlery[2]; // current philosopher cutlery state
 } Philosopher;
 
+#include "simulation.h"
 
-/* put your code here */
+void philosopher(Simulation* sim, Philosopher* p);
+void think(Simulation *sim,Philosopher *p);
+void choose_meal(Simulation *sim,Philosopher *p);
+void eat(Simulation *sim, Philosopher *p);
 
 #endif

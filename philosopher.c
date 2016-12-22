@@ -9,6 +9,7 @@
 #include <unistd.h>
 #include <assert.h>
 #include <string.h>
+#include "util.h"
 #include "philosopher.h"
 #include "dining-room.h"
 #include "simulation.h"
@@ -16,18 +17,22 @@
 
 /* put your code here */
 
-void philosopher(Simulation *sim, Philosopher *p){
-  Philosopher *p;
+void philosopher(Simulation *sim, Philosopher *p) {
   p->state=P_BIRTH;
+  int live_iteractions;
+  { // Define live
+    int max_live = sim->params->PHILOSOPHER_MIN_LIVE;
+    int min_live = sim->params->PHILOSOPHER_MIN_LIVE;
+    live_iteractions = random_range(min_live, max_live);
+  }
 
-
-  while(1){
-    think(sim,p);  //fica a dormir até lhe dar a fome
-    choose_meal();
-    eat();
-
-    //take_cutlery(i);
-    //put_dirty_cutlery(i);
+  while(live_iteractions--){
+    think(sim, p);
+    choose_meal(sim, p);
+    // get_food(sim, p);
+    // get_cutlery(sim, p);
+    eat(sim, p);
+    // return_cutlery();
   }
 
 }
@@ -35,36 +40,23 @@ void philosopher(Simulation *sim, Philosopher *p){
 void think(Simulation *sim,Philosopher *p){
   p->state = P_THINKING;
   logger(sim);
-  usleep((random() % sim->params->THINK_TIME)*1000); //sleeping for [0,THINK_TIME] ms
+  random_sleep(sim->params->THINK_TIME);
+  p->state = P_HUNGRY;
+  logger(sim);
 }
 
-void choose_meal(){
-  //choose a meal
-  //if(random() < sim->params->CHOOSE_PIZZA_PROB * ((double)RAND_MAX + 1.0))
-  if(randomBoolean(sim->params->CHOOSE_PIZZA_PROB)
+void choose_meal(Simulation *sim,Philosopher *p) {
+  if(rand() % 100 < sim->params->CHOOSE_PIZZA_PROB)
     p->meal = P_GET_PIZZA;
   else
     p->meal = P_GET_SPAGHETTI;
+  logger(sim);
 }
 
-void randomSleep(int min, int max){ //microseconds
-  min=min*1000; //passing from milliseconds to microseconds
-  max=max*1000;
-  //usleep(min + (int)((double)random()/(double)RAND_MAX)*(max-min));
-  usleep(min + (int) (rand() / ((double)RAND_MAX + 1) * (max - min + 1)));
+void eat(Simulation *sim,Philosopher *p) {
+  p->state = P_EATING;
+  logger(sim);
+  random_sleep(sim->params->EAT_TIME);
+  p->state = P_FULL;
+  logger(sim);
 }
-
-int randomBoolean(double boolProb){
-  return ((double)random()/(double)RAND_MAX) < boolProb;
-}
-
-/*
-void take_cutlery(int i){
-
-    sem_wait(&mutex);  //Enter critical region
-    //ver se existem facas ou garfos lavados suficientes para comer, se não houver mandar request ao empregado
-
-
-    sem_post(&mutex); //Leave critical region
-}
-*/

@@ -7,6 +7,6 @@
 
 int random_range(int min, int max);
 
-int random_sleep(int time);
+void random_sleep(int time);
 
 #endif

@@ -46,5 +46,6 @@ void philosopher(Simulation* sim, Philosopher* p);
 void think(Simulation *sim,Philosopher *p);
 void choose_meal(Simulation *sim,Philosopher *p);
 void eat(Simulation *sim, Philosopher *p);
+void dead(Simulation *sim, Philosopher *p);
 
 #endif

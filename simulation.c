@@ -26,7 +26,7 @@ static void finish(Simulation* sim);
 int main(int argc, char* argv[])
 {
    // default parameter values:
-   Parameters params = {5,10,100,3,2,10,10,20,50,10,15};
+   Parameters params = {1,10,100,3,2,10,10,20,50,10,15};
    processArgs(&params, argc, argv);
    showParams(&params);
    printf("<press RETURN>");
@@ -36,39 +36,8 @@ int main(int argc, char* argv[])
    logger(sim);
    go(sim);
 
-   // dummy code!!!
-   sim->philosophers[0]->state = P_THINKING;
-   sim->philosophers[0]->meal = P_GET_PIZZA;
-   logger(sim);
-   sim->philosophers[0]->state = P_HUNGRY;
-   sim->philosophers[0]->meal = P_EAT_SPAGHETTI;
-   sim->philosophers[0]->cutlery[0] = P_GET_FORK;
-   logger(sim);
-   sim->philosophers[0]->state = P_EATING;
-   sim->philosophers[0]->meal = P_EAT_SPAGHETTI;
-   sim->philosophers[0]->cutlery[0] = P_KNIFE;
-   logger(sim);
-   sim->philosophers[0]->state = P_FULL;
-   sim->philosophers[0]->meal = P_NONE;
-   sim->philosophers[0]->cutlery[0] = P_PUT_FORK;
-   logger(sim);
-   sim->philosophers[0]->state = P_DEAD;
-   sim->philosophers[0]->cutlery[0] = P_NOTHING;
-   logger(sim);
-   sim->waiter->state = W_SLEEP;
-   logger(sim);
-   sim->waiter->state = W_REQUEST_CUTLERY;
-   sim->waiter->reqCutlery = W_ACTIVE;
-   sim->waiter->reqPizza = W_ACTIVE;
-   sim->waiter->reqSpaghetti = W_ACTIVE;
-   logger(sim);
-   sim->waiter->state = W_DEAD;
-   sim->waiter->reqCutlery = W_INACTIVE;
-   sim->waiter->reqPizza = W_INACTIVE;
-   sim->waiter->reqSpaghetti = W_INACTIVE;
-   logger(sim);
-   // dummy code end!!!
 
+   
    finish(sim);
 
    return 0;
@@ -81,7 +50,8 @@ static void go(Simulation* sim)
 {
    assert(sim != NULL);
 
-   /* put your code here */
+   philosopher(sim, sim->philosophers[0]);
+   
 }
 
 /**

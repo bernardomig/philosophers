@@ -35,6 +35,8 @@ void philosopher(Simulation *sim, Philosopher *p) {
     // return_cutlery();
   }
 
+  dead(sim, p);
+
 }
 
 void think(Simulation *sim,Philosopher *p){
@@ -58,5 +60,10 @@ void eat(Simulation *sim,Philosopher *p) {
   logger(sim);
   random_sleep(sim->params->EAT_TIME);
   p->state = P_FULL;
+  logger(sim);
+}
+
+void dead(Simulation *sim,Philosopher *p) {
+  p->state = P_DEAD;
   logger(sim);
 }

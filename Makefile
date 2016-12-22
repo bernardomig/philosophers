@@ -12,8 +12,8 @@ simulation: $(OBJS)
 	gcc $(SYMBOLS) $(CFLAGS) $(OBJS) -o simulation
 
 clean:
-	rm -fv $(OBJS)
+	@- rm $(OBJS)
 
 cleanall: clean
-	rm -fv simulation
+	@- rm simulation
 

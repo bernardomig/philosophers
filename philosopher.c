@@ -58,9 +58,16 @@ void choose_meal(Simulation *sim,Philosopher *p) {
 
 void eat(Simulation *sim,Philosopher *p) {
   p->state = P_EATING;
+  if(p->meal == P_GET_PIZZA) {
+    p->meal = P_EAT_PIZZA;
+  }
+  else if(p->meal == P_GET_SPAGHETTI) {
+    p->meal = P_GET_SPAGHETTI;
+  }
   logger(sim);
   random_sleep(sim->params->EAT_TIME);
   p->state = P_FULL;
+  p->meal = P_NONE;
   logger(sim);
 }
 

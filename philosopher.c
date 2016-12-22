@@ -26,13 +26,14 @@ void philosopher(Simulation *sim, Philosopher *p) {
     live_iteractions = random_range(min_live, max_live);
   }
 
-  while(live_iteractions--){
+  while(live_iteractions > 0){
     think(sim, p);
     choose_meal(sim, p);
     // get_food(sim, p);
     // get_cutlery(sim, p);
     eat(sim, p);
     // return_cutlery();
+    --live_iteractions;
   }
 
   dead(sim, p);

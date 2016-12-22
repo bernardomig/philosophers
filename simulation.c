@@ -48,10 +48,16 @@ int main(int argc, char* argv[])
  */
 static void go(Simulation* sim)
 {
-   assert(sim != NULL);
+    assert(sim != NULL);
 
-   philosopher(sim, sim->philosophers[0]);
-   
+    int i;
+    for(i = 0; i < sim->params->NUM_PHILOSOPHERS; ++i) {
+        int pid = fork();
+        if(pid != 0) {
+            philosopher(sim, sim->philosophers[i]);
+        }
+    }
+
 }
 
 /**

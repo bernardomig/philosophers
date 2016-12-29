@@ -30,10 +30,9 @@ void philosopher(Simulation *sim, Philosopher *p) {
   while(live_iteractions > 0){
     think(sim, p);
     choose_meal(sim, p);
-    // get_food(sim, p);
-    // get_cutlery(sim, p);
+    get_cutlery(sim, p);
     eat(sim, p);
-    // return_cutlery();
+    ret_cutlery(sim, p);
     --live_iteractions;
   }
 
@@ -52,19 +51,75 @@ void think(Simulation *sim,Philosopher *p){
 void choose_meal(Simulation *sim,Philosopher *p) {
   if(rand() % 100 < sim->params->CHOOSE_PIZZA_PROB) {
     p->meal = P_GET_PIZZA;
-    if(!getPizza(sim->diningRoom)) {
+    if(!getPizza(sim)) {
       waiterRequestPizza(sim);
-      while(!getPizza(sim->diningRoom));
+      while(!getPizza(sim));
     }
   }
   else {
     p->meal = P_GET_SPAGHETTI;
-    if(!getSpaghetti(sim->diningRoom)) {
+    if(!getSpaghetti(sim)) {
       waiterRequestSpaghetti(sim);
-      while(!getSpaghetti(sim->diningRoom));
+      while(!getSpaghetti(sim));
     }
   }
 
+  logger(sim);
+}
+
+void get_cutlery(Simulation* sim, Philosopher* p)
+{
+  p->cutlery[0] = P_GET_FORK;
+  logger(sim);
+  if(!getForks(sim)) {
+    waiterRequestCutlery(sim);
+    while(!getForks(sim));
+  }
+  p->cutlery[0] = P_FORK;
+  logger(sim);
+
+  if(p->meal == P_GET_PIZZA)
+  {
+    p->cutlery[1] = P_GET_KNIFE;
+    logger(sim);
+    if(!getKnives(sim)) {
+      waiterRequestCutlery(sim);
+      while(!getKnives(sim));
+    }
+    p->cutlery[1] = P_KNIFE;
+    logger(sim);
+  }
+  else {
+    p->cutlery[1] = P_GET_FORK;
+    logger(sim);
+    if(!getForks(sim)) {
+      waiterRequestCutlery(sim);
+      while(!getForks(sim));
+    }
+    p->cutlery[1] = P_FORK;
+    logger(sim);
+  }
+}
+
+void ret_cutlery(Simulation* sim, Philosopher* p)
+{
+
+  retForks(sim);
+  p->cutlery[0] = P_PUT_FORK;
+  logger(sim);
+  if(p->cutlery[1] == P_KNIFE)
+  {
+    retKnives(sim);
+    p->cutlery[1] = P_PUT_KNIFE;
+    logger(sim);
+  }
+  else {
+    retForks(sim);
+    p->cutlery[1] = P_PUT_FORK;
+    logger(sim);
+  }
+  p->cutlery[0] = P_NOTHING;
+  p->cutlery[1] = P_NOTHING;
   logger(sim);
 }
 
@@ -74,7 +129,7 @@ void eat(Simulation *sim,Philosopher *p) {
     p->meal = P_EAT_PIZZA;
   }
   else if(p->meal == P_GET_SPAGHETTI) {
-    p->meal = P_GET_SPAGHETTI;
+    p->meal = P_EAT_SPAGHETTI;
   }
   logger(sim);
   random_sleep(sim->params->EAT_TIME);

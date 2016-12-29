@@ -31,7 +31,7 @@ typedef struct _Waiter_ {
 void waiterLoop(Simulation*);
 void waiterReplenishPizza(Simulation*);
 void waiterReplenishSpaghetti(Simulation*);
-void waiterReplenishCutlery(Simulation*);
+void waiterWashCutlery(Simulation* sim);
 void waiterRequestPizza(Simulation*);
 void waiterRequestSpaghetti(Simulation*);
 void waiterRequestCutlery(Simulation*);

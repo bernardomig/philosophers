@@ -16,20 +16,20 @@
 #include "waiter.h"
 #include "logger.h"
 
-bool getPizza(DiningRoom* dr)
+bool getPizza(Simulation* sim)
 {
-    if(dr->pizza > 0) {
-        --dr->pizza;
+    if(sim->diningRoom->pizza > 0) {
+        --sim->diningRoom->pizza;
         return true;
     }
     else {
         return false;
     }
 }
-bool getSpaghetti(DiningRoom* dr)
+bool getSpaghetti(Simulation* sim)
 {
-    if(dr->spaghetti > 0) {
-        --dr->spaghetti;
+    if(sim->diningRoom->spaghetti > 0) {
+        --sim->diningRoom->spaghetti;
         return true;
     }
     else {
@@ -37,4 +37,32 @@ bool getSpaghetti(DiningRoom* dr)
     }
 }
 
-/* put your code here */
+bool getForks(Simulation* sim)
+{
+    if(sim->diningRoom->cleanForks > 0) {
+        --sim->diningRoom->cleanForks;
+        return true;
+    }
+    else
+        return false;
+}
+
+void retForks(Simulation* sim)
+{
+    ++sim->diningRoom->dirtyForks;
+}
+
+bool getKnives(Simulation* sim)
+{
+    if(sim->diningRoom->cleanKnives > 0) {
+        --sim->diningRoom->cleanKnives;
+        return true;
+    }
+    else
+        return false;
+}
+
+void retKnives(Simulation* sim)
+{
+    ++sim->diningRoom->dirtyKnives;
+}

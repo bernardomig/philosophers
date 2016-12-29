@@ -31,7 +31,7 @@ void waiterLoop(Simulation* sim)
     }
 
     if(sim->waiter->reqCutlery == W_ACTIVE) {
-
+        waiterWashCutlery(sim);
     }
     else if(sim->waiter->reqPizza == W_ACTIVE) {
         waiterReplenishPizza(sim);
@@ -62,9 +62,21 @@ void waiterReplenishSpaghetti(Simulation* sim)
     logger(sim);
 }
 
-void waiterReplenishCutlery(Simulation* sim)
+void waiterWashCutlery(Simulation* sim)
 {
-
+    sim->waiter->state = W_REQUEST_CUTLERY;
+    logger(sim);
+    int cleaningForks = sim->diningRoom->dirtyForks;
+    sim->diningRoom->dirtyForks = 0;
+    int cleaningKnives = sim->diningRoom->dirtyKnives;
+    sim->diningRoom->dirtyKnives = 0;
+    logger(sim);
+    random_sleep(sim->params->WASH_TIME);
+    sim->diningRoom->cleanKnives += cleaningKnives;
+    sim->diningRoom->cleanForks += cleaningForks;
+    sim->waiter->state = W_SLEEP;
+    sim->waiter->reqCutlery = W_INACTIVE;
+    logger(sim);
 }
 
 void waiterRequestPizza(Simulation* sim)
@@ -76,5 +88,11 @@ void waiterRequestPizza(Simulation* sim)
 void waiterRequestSpaghetti(Simulation* sim)
 {
     sim->waiter->reqSpaghetti = W_ACTIVE;
+    logger(sim);
+}
+
+void waiterRequestCutlery(Simulation* sim)
+{
+    sim->waiter->reqCutlery = W_ACTIVE;
     logger(sim);
 }

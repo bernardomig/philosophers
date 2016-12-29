@@ -22,9 +22,12 @@ typedef struct _DiningRoom_ {
 
 #include <stdbool.h>
 
-bool getPizza(DiningRoom*);
-bool getSpaghetti(DiningRoom*);
-
+bool getPizza(Simulation*);
+bool getSpaghetti(Simulation*);
+bool getForks(Simulation*);
+void retForks(Simulation*);
+bool getKnives(Simulation*);
+void retKnives(Simulation*);
 
 #endif
 

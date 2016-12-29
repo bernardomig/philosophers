@@ -45,6 +45,8 @@ typedef struct _Philosopher_ {
 void philosopher(Simulation* sim, Philosopher* p);
 void think(Simulation *sim,Philosopher *p);
 void choose_meal(Simulation *sim,Philosopher *p);
+void get_cutlery(Simulation* sim, Philosopher* p);
+void ret_cutlery(Simulation* sim, Philosopher* p);
 void eat(Simulation *sim, Philosopher *p);
 void dead(Simulation *sim, Philosopher *p);
 

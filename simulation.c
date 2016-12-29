@@ -12,6 +12,8 @@
 #include <getopt.h>
 #include <assert.h>
 #include <string.h>
+#include <sys/shm.h>
+#include <sys/wait.h>
 #include "parameters.h"
 #include "dining-room.h"
 #include "logger.h"
@@ -23,10 +25,17 @@ static void showParams(Parameters *params);
 static void go(Simulation* sim);
 static void finish(Simulation* sim);
 
+static key_t diningRoom_key = 123;
+static key_t waiter_key = 124;
+static key_t philosophers_key = 125;
+static int diningRoom_shmid;
+static int waiter_shmid;
+static int philosophers_shmid;
+
 int main(int argc, char* argv[])
 {
    // default parameter values:
-   Parameters params = {1,10,100,3,2,10,10,20,50,10,15};
+   Parameters params = {3,10,100,3,2,10,10,20,50,10,15};
    processArgs(&params, argc, argv);
    showParams(&params);
    printf("<press RETURN>");
@@ -35,8 +44,6 @@ int main(int argc, char* argv[])
    Simulation* sim = initSimulation(NULL, &params);
    logger(sim);
    go(sim);
-
-
    
    finish(sim);
 
@@ -53,10 +60,13 @@ static void go(Simulation* sim)
     int i;
     for(i = 0; i < sim->params->NUM_PHILOSOPHERS; ++i) {
         int pid = fork();
-        if(pid != 0) {
+        if(pid == 0) {
             philosopher(sim, sim->philosophers[i]);
+            exit(0);
         }
     }
+
+    while(wait(NULL) > 0);
 
 }
 
@@ -67,8 +77,11 @@ static void finish(Simulation* sim)
 {
    assert(sim != NULL);
 
-   /* put your code here */
+   shmctl(diningRoom_shmid, IPC_RMID, NULL);
+   shmctl(philosophers_shmid, IPC_RMID, NULL);
+   shmctl(waiter_shmid, IPC_RMID, NULL);
 }
+
 
 Simulation* initSimulation(Simulation* sim, Parameters* params)
 {
@@ -84,22 +97,27 @@ Simulation* initSimulation(Simulation* sim, Parameters* params)
    memcpy(result->params, params, sizeof(Parameters));
 
    // default DiningRoom values:
-   result->diningRoom = (DiningRoom*)mem_alloc(sizeof(DiningRoom));
+
+   diningRoom_shmid = shmget(diningRoom_key, sizeof(DiningRoom), 0600 | IPC_CREAT);
+   result->diningRoom = (DiningRoom*) shmat(diningRoom_shmid, NULL, 0);
    DiningRoom s = {params->NUM_PIZZA, params->NUM_SPAGHETTI, params->NUM_FORKS, params->NUM_KNIVES, 0, 0, 0, 0};
    memcpy(result->diningRoom, &s, sizeof(DiningRoom));
 
    // Philosopher:
    Philosopher p = {P_BIRTH,P_NONE,{P_NOTHING,P_NOTHING}};
    result->philosophers = (Philosopher**)mem_alloc(params->NUM_PHILOSOPHERS*sizeof(Philosopher*));
+   philosophers_shmid = shmget(philosophers_key, params->NUM_PHILOSOPHERS*sizeof(Philosopher), 0600 | IPC_CREAT);
+   Philosopher* phi = (Philosopher*) shmat(philosophers_shmid, NULL, 0);
    for(i = 0; i < params->NUM_PHILOSOPHERS; i++)
    {
-      result->philosophers[i] = (Philosopher*)mem_alloc(sizeof(Philosopher));
+      result->philosophers[i] = &(phi[i]);
       memcpy(result->philosophers[i], &p, sizeof(Philosopher));
    }
 
    // Waiter:
+   waiter_shmid = shmget(waiter_key, sizeof(Waiter), 0600 | IPC_CREAT);
+   result->waiter = (Waiter*) shmat(waiter_shmid, NULL, 0);
    Waiter w = {W_NONE,W_INACTIVE,W_INACTIVE,W_INACTIVE};
-   result->waiter = (Waiter*)mem_alloc(sizeof(Waiter));
    memcpy(result->waiter, &w, sizeof(Waiter));
 
    return result;
@@ -314,18 +332,3 @@ static void showParams(Parameters *params)
    printf("  --wash-time: %d\n", params->WASH_TIME);
    printf("\n");
 }
-
-/**
- * Memory error is not recoverable.
- */
-void* mem_alloc(int size)
-{
-   void* result = malloc(size);
-   if (result == NULL)
-   {
-      fprintf(stderr, "ERROR: no memory!\n");
-      exit(EXIT_FAILURE);
-   }
-   return result;
-}
-

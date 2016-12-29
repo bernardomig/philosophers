@@ -19,12 +19,12 @@ typedef struct _Simulation_ {
    struct _Waiter_* waiter;
 } Simulation;
 
+#include "util.h"
 #include "parameters.h"
 #include "dining-room.h"
 #include "philosopher.h"
 #include "waiter.h"
 
 Simulation* initSimulation(Simulation* sim, Parameters* params);
-void* mem_alloc(int size);
 
 #endif

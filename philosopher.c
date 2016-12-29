@@ -19,6 +19,7 @@
 
 void philosopher(Simulation *sim, Philosopher *p) {
   p->state=P_BIRTH;
+  srand((unsigned) getpid());
   int live_iteractions;
   { // Define live
     int max_live = sim->params->PHILOSOPHER_MIN_LIVE;

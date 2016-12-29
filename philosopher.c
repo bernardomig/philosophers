@@ -50,10 +50,21 @@ void think(Simulation *sim,Philosopher *p){
 }
 
 void choose_meal(Simulation *sim,Philosopher *p) {
-  if(rand() % 100 < sim->params->CHOOSE_PIZZA_PROB)
+  if(rand() % 100 < sim->params->CHOOSE_PIZZA_PROB) {
     p->meal = P_GET_PIZZA;
-  else
+    if(!getPizza(sim->diningRoom)) {
+      waiterRequestPizza(sim);
+      while(!getPizza(sim->diningRoom));
+    }
+  }
+  else {
     p->meal = P_GET_SPAGHETTI;
+    if(!getSpaghetti(sim->diningRoom)) {
+      waiterRequestSpaghetti(sim);
+      while(!getSpaghetti(sim->diningRoom));
+    }
+  }
+
   logger(sim);
 }
 

@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
    Simulation* sim = initSimulation(NULL, &params);
    logger(sim);
    go(sim);
-   
+
    finish(sim);
 
    return 0;
@@ -64,6 +64,11 @@ static void go(Simulation* sim)
             philosopher(sim, sim->philosophers[i]);
             exit(0);
         }
+    }
+
+    if(fork() == 0) {
+        while(1)
+            waiterLoop(sim);
     }
 
     while(wait(NULL) > 0);
@@ -331,4 +336,17 @@ static void showParams(Parameters *params)
    printf("  --eat-time: %d\n", params->EAT_TIME);
    printf("  --wash-time: %d\n", params->WASH_TIME);
    printf("\n");
+}
+
+
+static bool semph = false;
+void lock()
+{
+    while(semph);
+    semph = true;
+}
+
+void unlock()
+{
+    semph = false;
 }

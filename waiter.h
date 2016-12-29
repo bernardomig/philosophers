@@ -28,7 +28,12 @@ typedef struct _Waiter_ {
    WaiterPendingState reqSpaghetti;  // waiter's request spaghetti state
 } Waiter;
 
-
-/* put your code here */
+void waiterLoop(Simulation*);
+void waiterReplenishPizza(Simulation*);
+void waiterReplenishSpaghetti(Simulation*);
+void waiterReplenishCutlery(Simulation*);
+void waiterRequestPizza(Simulation*);
+void waiterRequestSpaghetti(Simulation*);
+void waiterRequestCutlery(Simulation*);
 
 #endif

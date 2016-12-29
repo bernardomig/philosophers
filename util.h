@@ -11,6 +11,4 @@ void random_sleep(int time);
 
 void* mem_alloc(int size);
 
-
-
 #endif

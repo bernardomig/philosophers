@@ -25,6 +25,11 @@ typedef struct _Simulation_ {
 #include "philosopher.h"
 #include "waiter.h"
 
+#include <stdbool.h>
+
 Simulation* initSimulation(Simulation* sim, Parameters* params);
+
+void lock();
+void unlock();
 
 #endif

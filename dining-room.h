@@ -20,8 +20,11 @@ typedef struct _DiningRoom_ {
    int dirtyKnivesInWaiter;    // number of dirty knives in waiter (i.e. the dirty knives that are being washed)
 } DiningRoom;
 
+#include <stdbool.h>
 
-/* put your code here */
+bool getPizza(DiningRoom*);
+bool getSpaghetti(DiningRoom*);
+
 
 #endif
 

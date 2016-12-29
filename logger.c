@@ -19,7 +19,9 @@ void logger(Simulation* sim)
 {
    assert(sim != NULL);
 
+   lock();
    unsafe_logger(sim);
+   unlock();
 }
 
 /*********************************************************************/

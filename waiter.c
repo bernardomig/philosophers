@@ -25,7 +25,7 @@ void waiterLoop(Simulation* sim)
         }
     }
     if(!stillRunning) {
-        waiterWashCutlery(sim   );
+        waiterWashCutlery(sim);
         sim->waiter->state = W_DEAD;
         logger(sim);
         exit(0);
@@ -69,18 +69,29 @@ void waiterReplenishSpaghetti(Simulation* sim)
 
 void waiterWashCutlery(Simulation* sim)
 {
+    lock(SEMPH_CUTLERY);
+    bool no_cutlery = sim->diningRoom->dirtyForks == 0 && sim->diningRoom->dirtyKnives == 0;
+    unlock(SEMPH_CUTLERY);
+    if(no_cutlery) {
+        return;
+    }
+
     sim->waiter->state = W_REQUEST_CUTLERY;
     logger(sim);
+    lock(SEMPH_CUTLERY);
     int cleaningForks = sim->diningRoom->dirtyForks;
     sim->diningRoom->dirtyForks = 0;
     int cleaningKnives = sim->diningRoom->dirtyKnives;
     sim->diningRoom->dirtyKnives = 0;
+    unlock(SEMPH_CUTLERY);
     logger(sim);
     random_sleep(sim->params->WASH_TIME);
+    lock(SEMPH_CUTLERY);
     sim->diningRoom->cleanKnives += cleaningKnives;
     sim->diningRoom->cleanForks += cleaningForks;
     sim->waiter->state = W_SLEEP;
     sim->waiter->reqCutlery = W_INACTIVE;
+    unlock(SEMPH_CUTLERY);
     logger(sim);
 }
 

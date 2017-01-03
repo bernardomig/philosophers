@@ -30,9 +30,9 @@ void philosopher(Simulation *sim, Philosopher *p) {
   while(live_iteractions > 0){
     think(sim, p);
     choose_meal(sim, p);
-    //get_cutlery(sim, p);
+    get_cutlery(sim, p);
     eat(sim, p);
-    //ret_cutlery(sim, p);
+    ret_cutlery(sim, p);
     --live_iteractions;
   }
 
@@ -77,7 +77,9 @@ void get_cutlery(Simulation* sim, Philosopher* p)
   logger(sim);
   if(!getForks(sim)) {
     waiterRequestCutlery(sim);
-    while(!getForks(sim));
+    while(!getForks(sim)) {
+      usleep(100);
+    };
   }
   p->cutlery[0] = P_FORK;
   logger(sim);

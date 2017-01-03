@@ -47,30 +47,42 @@ bool getSpaghetti(Simulation* sim)
 
 bool getForks(Simulation* sim)
 {
+    bool ret;
+    lock(SEMPH_CUTLERY);
     if(sim->diningRoom->cleanForks > 0) {
         --sim->diningRoom->cleanForks;
-        return true;
+        ret = true;
     }
     else
-        return false;
+        ret = false;
+    unlock(SEMPH_CUTLERY);
+    return ret;
 }
 
 void retForks(Simulation* sim)
 {
+    lock(SEMPH_CUTLERY);
     ++sim->diningRoom->dirtyForks;
+    unlock(SEMPH_CUTLERY);
 }
 
 bool getKnives(Simulation* sim)
 {
+    bool ret;
+    lock(SEMPH_CUTLERY);
     if(sim->diningRoom->cleanKnives > 0) {
         --sim->diningRoom->cleanKnives;
-        return true;
+        ret = true;
     }
     else
-        return false;
+        ret = false;
+    unlock(SEMPH_CUTLERY);
+    return ret;
 }
 
 void retKnives(Simulation* sim)
 {
+    lock(SEMPH_CUTLERY);
     ++sim->diningRoom->dirtyKnives;
+    unlock(SEMPH_CUTLERY);
 }

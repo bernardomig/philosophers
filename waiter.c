@@ -73,6 +73,7 @@ void waiterWashCutlery(Simulation* sim)
     bool no_cutlery = sim->diningRoom->dirtyForks == 0 && sim->diningRoom->dirtyKnives == 0;
     unlock(SEMPH_CUTLERY);
     if(no_cutlery) {
+        sim->waiter->reqCutlery = W_INACTIVE;
         return;
     }
 
@@ -100,17 +101,14 @@ void waiterWashCutlery(Simulation* sim)
 void waiterRequestPizza(Simulation* sim)
 {
     sim->waiter->reqPizza = W_ACTIVE;
-    logger(sim);
 }
 
 void waiterRequestSpaghetti(Simulation* sim)
 {
     sim->waiter->reqSpaghetti = W_ACTIVE;
-    logger(sim);
 }
 
 void waiterRequestCutlery(Simulation* sim)
 {
     sim->waiter->reqCutlery = W_ACTIVE;
-    logger(sim);
 }

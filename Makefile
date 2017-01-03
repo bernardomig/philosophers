@@ -20,4 +20,10 @@ cleanall: clean
 	@- rm simulation
 
 test: all
-	for i in {1..100}; do echo "" |  ./simulation > /dev/null; echo -en "\rTesting... [$i/100]"; done
+	@- echo -n "Testing"; \
+	   for i in {1..10}; \
+	   do \
+	      echo -n "."; \
+		  echo "" | ./simulation -f 2 -k 1 -n 10 > /dev/null; \
+	   done; \
+	   printf "\nDone!\n"

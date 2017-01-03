@@ -18,23 +18,31 @@
 
 bool getPizza(Simulation* sim)
 {
+    bool ret;
+    lock(SEMPH_PIZZAS);
     if(sim->diningRoom->pizza > 0) {
         --sim->diningRoom->pizza;
-        return true;
+        ret = true;
     }
     else {
-        return false;
+        ret = false;
     }
+    unlock(SEMPH_PIZZAS);
+    return ret;
 }
 bool getSpaghetti(Simulation* sim)
 {
+    bool ret;
+    lock(SEMPH_SPAGHETTI);
     if(sim->diningRoom->spaghetti > 0) {
         --sim->diningRoom->spaghetti;
-        return true;
+        ret = true;
     }
     else {
-        return false;
+        ret = false;
     }
+    unlock(SEMPH_SPAGHETTI);
+    return ret;
 }
 
 bool getForks(Simulation* sim)

@@ -30,9 +30,9 @@ void philosopher(Simulation *sim, Philosopher *p) {
   while(live_iteractions > 0){
     think(sim, p);
     choose_meal(sim, p);
-    get_cutlery(sim, p);
+    //get_cutlery(sim, p);
     eat(sim, p);
-    ret_cutlery(sim, p);
+    //ret_cutlery(sim, p);
     --live_iteractions;
   }
 
@@ -40,7 +40,7 @@ void philosopher(Simulation *sim, Philosopher *p) {
 
 }
 
-void think(Simulation *sim,Philosopher *p){
+void think(Simulation *sim,Philosopher *p) {
   p->state = P_THINKING;
   logger(sim);
   random_sleep(sim->params->THINK_TIME);
@@ -53,14 +53,18 @@ void choose_meal(Simulation *sim,Philosopher *p) {
     p->meal = P_GET_PIZZA;
     if(!getPizza(sim)) {
       waiterRequestPizza(sim);
-      while(!getPizza(sim));
+      while(!getPizza(sim)) {
+        usleep(100);
+      }
     }
   }
   else {
     p->meal = P_GET_SPAGHETTI;
     if(!getSpaghetti(sim)) {
       waiterRequestSpaghetti(sim);
-      while(!getSpaghetti(sim));
+      while(!getSpaghetti(sim)) {
+        usleep(100);
+      }
     }
   }
 

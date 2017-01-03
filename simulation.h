@@ -29,7 +29,19 @@ typedef struct _Simulation_ {
 
 Simulation* initSimulation(Simulation* sim, Parameters* params);
 
-void lock();
-void unlock();
+typedef
+enum _SemphType_
+{
+    SEMPH_PHILOSOPHERS = 0b0001,
+    SEMPH_PIZZAS       = 0b0010,
+    SEMPH_SPAGHETTI    = 0b0100,
+    SEMPH_CUTLERY      = 0b1000,
+    SEMPH_FOOD         = 0b0110,
+    SEMPH_ALL          = 0b1111
+}
+SemphType;
+
+void lock(SemphType);
+void unlock(SemphType);
 
 #endif

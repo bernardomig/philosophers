@@ -25,6 +25,7 @@ void waiterLoop(Simulation* sim)
         }
     }
     if(!stillRunning) {
+        waiterWashCutlery(sim   );
         sim->waiter->state = W_DEAD;
         logger(sim);
         exit(0);
@@ -46,7 +47,9 @@ void waiterReplenishPizza(Simulation* sim)
 {
     sim->waiter->state = W_REQUEST_PIZZA;
     logger(sim);
+    lock(SEMPH_PIZZAS);
     sim->diningRoom->pizza = sim->params->NUM_PIZZA;
+    unlock(SEMPH_PIZZAS);
     sim->waiter->reqPizza = W_INACTIVE;
     sim->waiter->state = W_SLEEP;
     logger(sim);
@@ -56,7 +59,9 @@ void waiterReplenishSpaghetti(Simulation* sim)
 {
     sim->waiter->state = W_REQUEST_SPAGHETTI;
     logger(sim);
+    lock(SEMPH_SPAGHETTI);
     sim->diningRoom->spaghetti = sim->params->NUM_SPAGHETTI;
+    unlock(SEMPH_SPAGHETTI);
     sim->waiter->reqSpaghetti = W_INACTIVE;
     sim->waiter->state = W_SLEEP;
     logger(sim);

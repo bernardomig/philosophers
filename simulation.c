@@ -14,6 +14,7 @@
 #include <string.h>
 #include <sys/shm.h>
 #include <sys/wait.h>
+#include <sys/sem.h>
 #include "parameters.h"
 #include "dining-room.h"
 #include "logger.h"
@@ -25,12 +26,15 @@ static void showParams(Parameters *params);
 static void go(Simulation* sim);
 static void finish(Simulation* sim);
 
-static key_t diningRoom_key = 123;
-static key_t waiter_key = 124;
-static key_t philosophers_key = 125;
+static const key_t diningRoom_key = 123;
+static const key_t waiter_key = 124;
+static const key_t philosophers_key = 125;
 static int diningRoom_shmid;
 static int waiter_shmid;
 static int philosophers_shmid;
+
+static const key_t sem_key = 1234;
+static int semid;
 
 int main(int argc, char* argv[])
 {
@@ -82,6 +86,8 @@ static void finish(Simulation* sim)
 {
    assert(sim != NULL);
 
+   semctl(semid, 0, IPC_RMID);
+
    shmctl(diningRoom_shmid, IPC_RMID, NULL);
    shmctl(philosophers_shmid, IPC_RMID, NULL);
    shmctl(waiter_shmid, IPC_RMID, NULL);
@@ -91,6 +97,9 @@ static void finish(Simulation* sim)
 Simulation* initSimulation(Simulation* sim, Parameters* params)
 {
    assert(params != NULL);
+
+   semid = semget(sem_key, 4, 0600 | IPC_CREAT);
+   unlock(SEMPH_ALL);
 
    int i;
    Simulation* result = sim;
@@ -336,17 +345,54 @@ static void showParams(Parameters *params)
    printf("  --eat-time: %d\n", params->EAT_TIME);
    printf("  --wash-time: %d\n", params->WASH_TIME);
    printf("\n");
+
 }
 
-
-static bool semph = false;
-void lock()
+void lock(SemphType type)
 {
-    while(semph);
-    semph = true;
+    struct sembuf down;
+    down.sem_op = -1;
+    down.sem_flg = 0;
+
+    if(type | SEMPH_PHILOSOPHERS) {
+        down.sem_num = 0;
+        semop(semid, &down, 1);
+    }
+    if(type | SEMPH_PIZZAS) {
+        down.sem_num = 1;
+        semop(semid, &down, 1);
+    }
+    if(type | SEMPH_SPAGHETTI) {
+        down.sem_num = 2;
+        semop(semid, &down, 1);
+    }
+    if(type | SEMPH_CUTLERY) {
+        down.sem_num = 3;
+        semop(semid, &down, 1);
+    }
 }
 
-void unlock()
+void unlock(SemphType type)
 {
-    semph = false;
+    struct sembuf up;
+    up.sem_op = +1;
+    up.sem_flg = 0;
+
+    if(type | SEMPH_PHILOSOPHERS) {
+        up.sem_num = 0;
+        semop(semid, &up, 1);
+    }
+    if(type | SEMPH_PIZZAS) {
+        up.sem_num = 1;
+        semop(semid, &up, 1);
+    }
+    if(type | SEMPH_SPAGHETTI) {
+        up.sem_num = 2;
+        semop(semid, &up, 1);
+    }
+    if(type | SEMPH_CUTLERY) {
+        up.sem_num = 3;
+        semop(semid, &up, 1);
+    }
+
 }

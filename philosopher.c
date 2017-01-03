@@ -51,36 +51,33 @@ void think(Simulation *sim,Philosopher *p) {
 void choose_meal(Simulation *sim,Philosopher *p) {
   if(rand() % 100 < sim->params->CHOOSE_PIZZA_PROB) {
     p->meal = P_GET_PIZZA;
-    if(!getPizza(sim)) {
+    while(!getPizza(sim)) {
       waiterRequestPizza(sim);
-      while(!getPizza(sim)) {
-        usleep(100);
-      }
-    }
+      usleep(100);
+    };
   }
   else {
     p->meal = P_GET_SPAGHETTI;
-    if(!getSpaghetti(sim)) {
+    while(!getSpaghetti(sim)) {
       waiterRequestSpaghetti(sim);
-      while(!getSpaghetti(sim)) {
-        usleep(100);
-      }
-    }
+      usleep(100);
+    };
   }
 
   logger(sim);
 }
 
+/**********************************
+ * OLD ONE
+ **********************************
 void get_cutlery(Simulation* sim, Philosopher* p)
 {
   p->cutlery[0] = P_GET_FORK;
   logger(sim);
-  if(!getForks(sim)) {
+  while(!getForks(sim)) {
     waiterRequestCutlery(sim);
-    while(!getForks(sim)) {
-      usleep(100);
-    };
-  }
+    usleep(100);
+  };
   p->cutlery[0] = P_FORK;
   logger(sim);
 
@@ -88,23 +85,49 @@ void get_cutlery(Simulation* sim, Philosopher* p)
   {
     p->cutlery[1] = P_GET_KNIFE;
     logger(sim);
-    if(!getKnives(sim)) {
+    while(!getKnives(sim)) {
       waiterRequestCutlery(sim);
-      while(!getKnives(sim));
-    }
+      usleep(100);
+    };
     p->cutlery[1] = P_KNIFE;
     logger(sim);
   }
   else {
     p->cutlery[1] = P_GET_FORK;
     logger(sim);
-    if(!getForks(sim)) {
+    while(!getForks(sim)) {
       waiterRequestCutlery(sim);
-      while(!getForks(sim));
-    }
+      usleep(100);
+    };
     p->cutlery[1] = P_FORK;
     logger(sim);
   }
+}
+************************************/
+
+void get_cutlery(Simulation* sim, Philosopher* p)
+{
+  if(p->meal == P_GET_PIZZA) {
+    p->cutlery[0] = P_GET_FORK;
+    p->cutlery[1] = P_GET_KNIFE;
+    while(!getForkAndKnife(sim)) {
+      waiterRequestCutlery(sim);
+      usleep(100);
+    }
+    p->cutlery[0] = P_FORK;
+    p->cutlery[1] = P_KNIFE;
+  }
+  else {
+    p->cutlery[0] = P_GET_FORK;
+    p->cutlery[1] = P_GET_FORK;
+    while(!getForkAndFork(sim)) {
+      waiterRequestCutlery(sim);
+      usleep(100);
+    }
+    p->cutlery[0] = P_FORK;
+    p->cutlery[1] = P_FORK;
+  }
+  logger(sim);
 }
 
 void ret_cutlery(Simulation* sim, Philosopher* p)

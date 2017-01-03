@@ -59,6 +59,35 @@ bool getForks(Simulation* sim)
     return ret;
 }
 
+bool getForkAndFork(Simulation* sim)
+{
+    bool ret;
+    lock(SEMPH_CUTLERY);
+    if(sim->diningRoom->cleanForks >= 2) {
+        sim->diningRoom->cleanForks -= 2;
+        ret = true;
+    }
+    else
+        ret = false;
+    unlock(SEMPH_CUTLERY);
+    return ret;
+}
+
+bool getForkAndKnife(Simulation* sim)
+{
+    bool ret;
+    lock(SEMPH_CUTLERY);
+    if(sim->diningRoom->cleanForks > 0 && sim->diningRoom->cleanKnives > 0) {
+        --sim->diningRoom->cleanForks;
+        --sim->diningRoom->cleanKnives;
+        ret = true;
+    }
+    else
+        ret = false;
+    unlock(SEMPH_CUTLERY);
+    return ret;
+}
+
 void retForks(Simulation* sim)
 {
     lock(SEMPH_CUTLERY);

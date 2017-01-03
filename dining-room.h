@@ -24,6 +24,8 @@ typedef struct _DiningRoom_ {
 
 bool getPizza(Simulation*);
 bool getSpaghetti(Simulation*);
+bool getForkAndKnife(Simulation*);
+bool getForkAndFork(Simulation*);
 bool getForks(Simulation*);
 void retForks(Simulation*);
 bool getKnives(Simulation*);

@@ -79,19 +79,21 @@ void waiterWashCutlery(Simulation* sim)
     sim->waiter->state = W_REQUEST_CUTLERY;
     logger(sim);
     lock(SEMPH_CUTLERY);
-    int cleaningForks = sim->diningRoom->dirtyForks;
+    sim->diningRoom->dirtyForksInWaiter = sim->diningRoom->dirtyForks;
     sim->diningRoom->dirtyForks = 0;
-    int cleaningKnives = sim->diningRoom->dirtyKnives;
+    sim->diningRoom->dirtyKnivesInWaiter = sim->diningRoom->dirtyKnives;
     sim->diningRoom->dirtyKnives = 0;
     unlock(SEMPH_CUTLERY);
     logger(sim);
     random_sleep(sim->params->WASH_TIME);
     lock(SEMPH_CUTLERY);
-    sim->diningRoom->cleanKnives += cleaningKnives;
-    sim->diningRoom->cleanForks += cleaningForks;
+    sim->diningRoom->cleanKnives += sim->diningRoom->dirtyKnivesInWaiter;
+    sim->diningRoom->cleanForks += sim->diningRoom->dirtyForksInWaiter;
+    sim->diningRoom->dirtyForksInWaiter = 0;
+    sim->diningRoom->dirtyKnivesInWaiter = 0;
+    unlock(SEMPH_CUTLERY);
     sim->waiter->state = W_SLEEP;
     sim->waiter->reqCutlery = W_INACTIVE;
-    unlock(SEMPH_CUTLERY);
     logger(sim);
 }
 
